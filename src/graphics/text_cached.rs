@@ -504,7 +504,19 @@ impl Drawable for TextCached {
             param.offset.x * self.width(ctx) as f32,
             param.offset.y * self.height(ctx) as f32,
         );
-        let param = DrawParam { offset, ..param };
+
+        // Scales text to fit the window.
+        let (window_width, window_height) = get_size(ctx);
+        let scale = Point2::new(
+            param.scale.x * window_width as f32 / ctx.conf.window_mode.width as f32,
+            param.scale.y * window_height as f32 / ctx.conf.window_mode.height as f32,
+        );
+
+        let param = DrawParam {
+            offset,
+            scale,
+            ..param
+        };
         self.queue(ctx, Point2::new(0.0, 0.0), param.color);
         TextCached::draw_queued(ctx, param)
     }
